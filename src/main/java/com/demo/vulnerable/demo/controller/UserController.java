@@ -1,8 +1,10 @@
 package com.demo.vulnerable.demo.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,13 +24,17 @@ public class UserController {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     
-    // Endpoint vulnérable à l'injection SQL
+    // Endpoint vulnérable à l'injection SQL (utilisant JdbcTemplate)
     @GetMapping("/search")
-    public List<User> searchUsers(@RequestParam String query) {
+    public List<Map<String, Object>> searchUsers(@RequestParam String query) {
         String sql = "SELECT * FROM user WHERE username LIKE '%" + query + "%'";
-        return userRepository.findByCustomQuery(sql);
+        return jdbcTemplate.queryForList(sql);
     }
+    
     
     // Endpoint vulnérable au XSS
     @PostMapping("/comments")
