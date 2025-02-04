@@ -6,19 +6,22 @@ import org.springframework.stereotype.Component;
 
 import com.demo.vulnerable.demo.model.User;
 import com.demo.vulnerable.demo.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private UserRepository userRepository;
+    
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) {
         // Admin user
         User admin = new User();
         admin.setUsername("admin");
-        admin.setPassword("admin123"); // Mot de passe en clair
+        admin.setPassword(passwordEncoder.encode("password123"));
         admin.setEmail("admin@company.com");
         admin.setCreditCard("4532-7165-9087-2342");
         admin.setAdmin(true);
@@ -27,7 +30,8 @@ public class DataInitializer implements CommandLineRunner {
         // Regular user
         User user = new User();
         user.setUsername("john.doe");
-        user.setPassword("password123");
+        user.setPassword(passwordEncoder.encode("password123"));
+
         user.setEmail("john@example.com");
         user.setCreditCard("4539-5789-3456-2190");
         user.setAdmin(false);
